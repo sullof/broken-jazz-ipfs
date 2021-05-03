@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+
+const path = require('path')
+const pkg = require('./package.json')
+const inquirer = require('inquirer')
+const chalk = require('chalk')
+const colorize = require('json-colorizer')
+const IPFS = require('./src/IPFS')
+
+
+const commandLineArgs = require('command-line-args')
+
+const optionDefinitions = [
+    {
+        name: 'help',
+        alias: 'h',
+        type: Boolean
+    },
+    {
+        name: 'file',
+        alias: 'f',
+        type: String
+    },
+    {
+        name: 'id',
+        alias: 'i',
+        type: Number
+    },
+    {
+        name: 'track',
+        alias: 't',
+        type: Number
+    }
+]
+
+function error(message) {
+    if (!Array.isArray(message)) {
+        message = [message]
+    }
+    console.error(chalk.red(message[0]))
+    if (message[1]) {
+        console.info(message[1])
+    }
+    /*eslint-disable-next-line*/
+    process.exit(1)
+}
+
+let options = {}
+try {
+    options = commandLineArgs(optionDefinitions, {
+        camelCase: true
+    })
+} catch (e) {
+    error(e.message)
+}
+
+if (options.file && options.id && options.track) {
+    options.file = path.resolve(__dirname, options.file)
+    addToIPFSAndPin(options)
+} else {
+    console.error('ERROR: Missing parameters\n')
+    options.help = true
+}
+
+
+if (options.help) {
+    console.info(`${pkg.description}
+
+Options:
+  -h, --help            This help.
+  -f, --file            The image/video of the NFT
+  -i, --id              The id of the NFT
+  -t, --track           The track number for the NFT
+                          
+Examples:
+  $ bji -f brokenJazz23.mp4 -i 23 -t 12
+`)
+    // eslint-disable-next-line no-process-exit
+    process.exit(0)
+}
+
+
+
+const colorizeOptions = {
+    pretty: true,
+    colors: {
+        STRING_KEY: 'blue.bold',
+        STRING_LITERAL: 'green'
+    }
+}
+
+
+async function addToIPFSAndPin(options) {
+    const ipfs = new IPFS()
+    console.log(chalk.grey('Starting...'))
+
+    const nft = await ipfs.addAndPin(options)
+    console.log('🌿 Added and pinned new NFT data: ')
+
+    alignOutput([
+        ['Metadata URI:', chalk.blue(nft.metadataURI)],
+        ['Metadata Gateway URL:', chalk.blue(nft.metadataGatewayURL)],
+        ['Asset URI:', chalk.blue(nft.assetURI)],
+        ['Asset Gateway URL:', chalk.blue(nft.assetGatewayURL)],
+    ])
+    console.log('NFT Metadata:')
+    console.log(colorize(JSON.stringify(nft.metadata), colorizeOptions))
+}
+
+// ---- helpers
+
+async function promptForMissing(cliOptions, prompts) {
+    const questions = []
+    for (const [name, prompt] of Object.entries(prompts)) {
+        prompt.name = name
+        prompt.when = (answers) => {
+            if (cliOptions[name]) {
+                answers[name] = cliOptions[name]
+                return false
+            }
+            return true
+        }
+        questions.push(prompt)
+    }
+    return inquirer.prompt(questions)
+}
+
+function alignOutput(labelValuePairs) {
+    const maxLabelLength = labelValuePairs
+      .map(([l, _]) => l.length)
+      .reduce((len, max) => len > max ? len : max)
+    for (const [label, value] of labelValuePairs) {
+        console.log(label.padEnd(maxLabelLength+1), value)
+    }
+}

@@ -1,0 +1,36 @@
+const tracks = {
+  1: 'Broken Jazz',
+  2: 'Rhanda and Betty',
+  3: 'Escaping the Prison',
+  4: 'Filastrocca Della Sera',
+  5: 'Tangolatronico',
+  6: 'The Clarity of the Big Fly',
+  7: 'Urca, Che Voglia Di Andare',
+  8: 'Old Memories',
+  9: 'Taste of Exile',
+  10: 'Lullaby for a Christmas Eve',
+  11: 'Arrassusia',
+  12: 'Malinconia Di Fine Anno',
+  13: 'Inner Galaxy',
+  14: "Variation on Chopin's Prelude, Op. 28, No. 18 in F Minor",
+  15: 'Cammarusa',
+  16: 'Wind Chimes for Your Patio',
+  17: '2020',
+  18: 'Lieve Lieve',
+  19: 'Feeling the South',
+  20: "L'ultimo Giro Di Giostra",
+  21: 'Who Knows',
+  22: 'She Looks Through the Window',
+  23: 'Zingarata',
+  24: 'Broadway',
+  25: 'Madrigale',
+  26: 'Smoking a Cigar on the Roof at Night',
+  27: 'Onomatopea',
+  28: 'Towards the Winter',
+  29: 'November Night',
+  30: 'A Page In Your Book',
+  31: 'Humming in the Twilight'
+}
+
+module.exports = tracks
+

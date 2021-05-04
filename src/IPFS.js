@@ -40,8 +40,6 @@ class IPFS {
 
     console.log(chalk.grey('Pinning to Pinata...'))
 
-
-
     await this.pin(assetURI)
     await this.pin(metadataURI)
 

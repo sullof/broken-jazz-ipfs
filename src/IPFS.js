@@ -1,6 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 
+const CID = require('cids')
 const ipfsClient = require('ipfs-http-client')
 const chalk = require('chalk')
 
@@ -25,18 +26,16 @@ class IPFS {
     const {cid: assetCid} = await this.ipfs.add({path: ipfsPath, content})
 
     const assetURI = ensureIpfsUriPrefix(assetCid) + '/' + basename
+
     const metadata = await this.makeNFTMetadata(assetURI, options)
-
-
     const {cid: metadataCid} = await this.ipfs.add({path: '/nft/metadata.json', content: JSON.stringify(metadata)})
+
     const metadataURI = ensureIpfsUriPrefix(metadataCid) + '/metadata.json'
 
     db.set(options.id, {
       metadataURI,
       metadata
     })
-
-    // await fs.writeFile(path.resolve(__dirname, '../db/index.json'), JSON.stringify(db, null, 2))
 
     console.log(chalk.grey('Pinning to Pinata...'))
 
@@ -86,6 +85,12 @@ function ensureIpfsUriPrefix(cidOrURI) {
   }
   return cidOrURI.toString()
 }
+
+function extractCID(cidOrURI) {
+  const cidString = stripIpfsUriPrefix(cidOrURI).split('/')[0]
+  return new CID(cidString)
+}
+
 
 function makeGatewayURL(ipfsURI) {
   return config.ipfsGatewayUrl + '/' + stripIpfsUriPrefix(ipfsURI)

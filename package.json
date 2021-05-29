@@ -19,6 +19,7 @@
     "@ethersproject/contracts": "^5.1.1",
     "@pinata/sdk": "^1.1.13",
     "chalk": "^4.1.0",
+    "cids": "^1.1.6",
     "command-line-args": "^5.1.1",
     "ethers": "^5.1.4",
     "fs-extra": "^9.1.0",

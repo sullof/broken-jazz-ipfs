@@ -76,7 +76,9 @@ if (options.list) {
 } else if (options.claimer && options.id) {
   signClaim(options)
 } else if (options.id && options.track) {
-  options.file = path.resolve(__dirname, '../issues', `BrokenJazz${options.id}.mp4`)
+  let id = options.id
+  if (id < 10) id = '0' + id
+  options.file = path.resolve(__dirname, '../issues', `BrokenJazz${id}.mp4`)
   if (!fs.existsSync(options.file)) {
     console.error('ERROR: Missing video file\n')
   } else {

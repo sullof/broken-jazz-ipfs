@@ -71,6 +71,21 @@ class IPFS {
     await pinata.pinByHash(cid, options)
   }
 
+  async pinList(options) {
+    const list = await pinata.pinList({
+      pageLimit: 200
+    })
+    if (options.onlyHash) {
+      let arr = []
+      for (let elem of list.rows) {
+        arr.push(elem.ipfs_pin_hash)
+      }
+      return arr
+    } else {
+      return list
+    }
+  }
+
 }
 
 function stripIpfsUriPrefix(cidOrURI) {

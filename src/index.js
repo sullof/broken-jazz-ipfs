@@ -23,11 +23,16 @@ const optionDefinitions = [
     alias: 'h',
     type: Boolean
   },
-  // {
-  //   name: 'file',
-  //   alias: 'f',
-  //   type: String
-  // },
+  {
+    name: 'list',
+    alias: 'l',
+    type: Boolean
+  },
+  {
+    name: 'only-hash',
+    alias: 'o',
+    type: Boolean
+  },
   {
     name: 'id',
     alias: 'i',
@@ -66,7 +71,9 @@ try {
   error(e.message)
 }
 
-if (options.claimer && options.id) {
+if (options.list) {
+  listPins(options)
+} else if (options.claimer && options.id) {
   signClaim(options)
 } else if (options.id && options.track) {
   options.file = path.resolve(__dirname, '../issues', `BrokenJazz${options.id}.mp4`)
@@ -104,6 +111,13 @@ const colorizeOptions = {
     STRING_KEY: 'blue.bold',
     STRING_LITERAL: 'green'
   }
+}
+
+async function listPins(options) {
+  const ipfs = new IPFS()
+  const list = await ipfs.pinList(options)
+
+  console.log(list)
 }
 
 async function signClaim(options) {
